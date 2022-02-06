@@ -21,14 +21,14 @@ steps:
 - script: |
     terraform version
   displayName: 'Check Terraform Version'
-  
-- script: |
-    ls -lah
-  displayName: 'list current repo'
 
 - script: |
     cd terraform/environments/dev
   displayName: 'Change directory'
+  
+- script: |
+    ls -lah
+  displayName: 'List current repo'
   
 - script: |
     terraform init

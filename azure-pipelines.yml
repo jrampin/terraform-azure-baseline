@@ -27,4 +27,4 @@ steps:
     ls -lah
     terraform init
     terraform plan
-  displayName: 'Change directory and test terraform init
+  displayName: 'Change directory and test terraform init'

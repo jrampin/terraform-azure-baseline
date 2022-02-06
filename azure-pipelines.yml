@@ -24,13 +24,7 @@ steps:
 
 - script: |
     cd terraform/environments/dev
-  displayName: 'Change directory'
-  
-- script: |
     ls -lah
-  displayName: 'List current repo'
-  
-- script: |
     terraform init
     terraform plan
-  displayName: 'Terraform init & plan'
+  displayName: 'Change directory and test terraform init

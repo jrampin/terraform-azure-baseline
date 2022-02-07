@@ -32,9 +32,13 @@ variables:
 # Stages
 #################################################
 stages:
+
+#################################################
+# DEV Stage 
+#################################################
 - stage: dev
   jobs:
-  - job: install
+  - job: 
     displayName: "Install Terraform"
     steps:
     - task: TerraformInstaller@0

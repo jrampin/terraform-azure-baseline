@@ -16,7 +16,7 @@ pool:
 #################################################
 parameters:
 # TARGET_VG_ENV
-- name: TARGET_Variable_Group
+- name: Environment_Variable_Group
   type: string
   default: dev
   values:
@@ -32,7 +32,7 @@ variables:
 # Stages
 #################################################
 stages:
-- stage: install
+- stage: dev
   jobs:
   - job: 
     steps:
@@ -41,13 +41,10 @@ stages:
       inputs:
         terraformVersion: 'latest'
         
-- stage: validate
-  jobs:
-  - job: Validate
-    steps:
     - bash: |
+      displayName: "Terraform Validate"
         cd terraform/environments/dev/
-        terraform init
+        terraform validate
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
         ARM_CLIENT_ID: $(ARM_CLIENT_ID)
@@ -55,11 +52,9 @@ stages:
         ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(ARM_TENANT_ID)
       
-- stage: dev_init
-  jobs:
-  - job: Init
-    steps:
+
     - bash: |
+      displayName: "Terraform Init"
         cd terraform/environments/dev/
         terraform init
       env:
@@ -69,11 +64,8 @@ stages:
         ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(ARM_TENANT_ID)
 
-- stage: dev_plan
-  jobs:
-  - job: Plan
-    steps:
     - bash: |
+      displayName: "Terraform Plan"
         cd terraform/environments/dev/
         terraform plan
       env:

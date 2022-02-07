@@ -51,7 +51,7 @@ stages:
     dependsOn: install
     steps:
     - bash: |
-        cd /terraform/environments/dev
+        cd terraform/environments/dev
         terraform init
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
@@ -65,7 +65,7 @@ stages:
     dependsOn: init
     steps:
     - bash: |
-        cd /terraform/environments/dev
+        cd terraform/environments/dev
         terraform validate
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
@@ -79,7 +79,7 @@ stages:
     dependsOn: validate
     steps:
     - bash: |
-        cd /terraform/environments/dev
+        cd terraform/environments/dev
         terraform plan
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)

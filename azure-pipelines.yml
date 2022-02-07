@@ -41,28 +41,13 @@ stages:
       displayName: "Install Terraform"
       inputs:
         terraformVersion: 'latest'
-        
-  - job: validate
-    displayName: "Terraform Validate"
-    dependsOn: install
-    steps:        
-    - bash: |      
-        cd terraform/environments/dev/
-        terraform validate
-      env:
-        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(ARM_TENANT_ID)
-  
-  - job: init
-    displayName: "Terraform Init"
-    dependsOn: validate
-    steps: 
-    - bash: |
-        cd terraform/environments/dev/
-        terraform init
+
+    - task: TerraformTaskV2@2
+      displayName: "Terraform Init"
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/dev'
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
         ARM_CLIENT_ID: $(ARM_CLIENT_ID)
@@ -70,13 +55,24 @@ stages:
         ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(ARM_TENANT_ID)
 
-  - job:
-    displayName: "Terraform Plan"
-    dependsOn: init
-    steps: 
-    - bash: |      
-        cd terraform/environments/dev/
-        terraform plan
+    - task: TerraformTaskV2@2
+      displayName: "Terraform Validate"
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/dev'
+      env:
+        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)      
+
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/dev'
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
         ARM_CLIENT_ID: $(ARM_CLIENT_ID)

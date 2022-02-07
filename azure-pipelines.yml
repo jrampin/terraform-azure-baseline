@@ -28,33 +28,35 @@ parameters:
 variables:
 - group: ${{ parameters.TARGET_VariableGroup }}
 
-#################################################
-# Stages
-#################################################
-stages:
+jobs:
+- job: TestStart
 
-# Install Terraform
-- stage: InstallTerraform
-  displayName: Install Terraform
-  jobs:
-  - job: Install_Terraform
-    steps:
-    - bash: |
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        sudo apt-get update && sudo apt-get install terraform
-        
-  - job: Terraform_Init
-    dependsOn: Install_Terraform
-    steps:
-    - bash: |
-        cd terraform/environments/dev
-        ls -lah
-        terraform init
-        terraform plan    
-      env:
-        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(ARM_TENANT_ID)
+  steps:
+  - task: TerraformInstaller@0
+    displayName: "Install Terraform"
+    inputs:
+      terraformVersion: 'latest'
+
+  - bash: |
+      cd terraform/environments/dev/
+      terraform init -backend-config=backend.tf
+      displayName: Terraform Init
+      name: init
+    env:
+      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)
+
+  - bash: |
+      cd terraform/environments/dev/
+      terraform plan
+      displayName: Terraform Plan
+      name: plan
+    env:
+      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)

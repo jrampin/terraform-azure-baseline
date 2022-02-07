@@ -44,6 +44,7 @@ stages:
 
     - task: TerraformTaskV2@2
       displayName: "Terraform Init"
+      dependsOn: install
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -57,6 +58,7 @@ stages:
 
     - task: TerraformTaskV2@2
       displayName: "Terraform Validate"
+      dependsOn: install
       inputs:
         provider: 'azurerm'
         command: 'validate'
@@ -69,6 +71,8 @@ stages:
         ARM_TENANT_ID: $(ARM_TENANT_ID)      
 
     - task: TerraformTaskV2@2
+      displayName: "Terraform Plan"
+      dependsOn: install
       inputs:
         provider: 'azurerm'
         command: 'plan'

@@ -39,7 +39,7 @@ jobs:
 
   - bash: |
       cd terraform/environments/dev/
-      terraform init -backend-config=backend.tf
+      terraform init
       displayName: Terraform Init
       name: init
     env:

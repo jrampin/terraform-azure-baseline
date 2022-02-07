@@ -48,12 +48,12 @@ stages:
     - bash: |
         cd terraform/environments/dev/
         terraform init
-    env:
-      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-      ARM_TENANT_ID: $(ARM_TENANT_ID)
+      env:
+        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
     dependsOn: install
       
 - stage: dev-init
@@ -63,12 +63,12 @@ stages:
     - bash: |
         cd terraform/environments/dev/
         terraform init
-    env:
-      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-      ARM_TENANT_ID: $(ARM_TENANT_ID)
+      env:
+        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
     dependsOn: validate
 
 - stage: dev-plan
@@ -78,10 +78,10 @@ stages:
     - bash: |
         cd terraform/environments/dev/
         terraform plan
-    env:
-      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-      ARM_TENANT_ID: $(ARM_TENANT_ID)
+      env:
+        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
     dependsOn: dev-init

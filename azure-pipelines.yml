@@ -35,6 +35,7 @@ stages:
 - stage: dev
   jobs:
   - job: 
+    displayName: "Install Terraform"
     steps:
     - task: TerraformInstaller@0
       displayName: "Install Terraform"
@@ -43,6 +44,7 @@ stages:
         
   - job:
     displayName: "Terraform Validate"
+    dependsOn: "Install Terraform"
     steps:        
     - bash: |      
         cd terraform/environments/dev/
@@ -56,6 +58,7 @@ stages:
   
   - job:
     displayName: "Terraform Init"
+    dependsOn: "Terraform Validate"
     steps: 
     - bash: |
         cd terraform/environments/dev/
@@ -69,6 +72,7 @@ stages:
 
   - job:
     displayName: "Terraform Plan"
+    dependsOn: "Terraform Init"
     steps: 
     - bash: |      
         cd terraform/environments/dev/

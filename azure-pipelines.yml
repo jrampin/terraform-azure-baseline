@@ -34,7 +34,7 @@ variables:
 stages:
 - stage: dev
   jobs:
-  - job: 
+  - job: install
     displayName: "Install Terraform"
     steps:
     - task: TerraformInstaller@0
@@ -42,9 +42,9 @@ stages:
       inputs:
         terraformVersion: 'latest'
         
-  - job:
+  - job: validate
     displayName: "Terraform Validate"
-    dependsOn: "Install Terraform"
+    dependsOn: install
     steps:        
     - bash: |      
         cd terraform/environments/dev/
@@ -56,9 +56,9 @@ stages:
         ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(ARM_TENANT_ID)
   
-  - job:
+  - job: init
     displayName: "Terraform Init"
-    dependsOn: "Terraform Validate"
+    dependsOn: validate
     steps: 
     - bash: |
         cd terraform/environments/dev/
@@ -72,7 +72,7 @@ stages:
 
   - job:
     displayName: "Terraform Plan"
-    dependsOn: "Terraform Init"
+    dependsOn: init
     steps: 
     - bash: |      
         cd terraform/environments/dev/

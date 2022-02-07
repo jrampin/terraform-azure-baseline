@@ -2,29 +2,66 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-20.04'
 
-#variables:
-#  ARM_ACCESS_KEY: '$(ARM_ACCESS_KEY)'
-#  ARM_CLIENT_ID: '$(ARM_CLIENT_ID)'
-#  ARM_CLIENT_SECRET: '$(ARM_CLIENT_SECRET)'
-#  ARM_SUBSCRIPTION_ID: '$(ARM_SUBSCRIPTION_ID)'
-#  ARM_TENANT_ID: '$(ARM_TENANT_ID)'
+#################################################
+# Parameters
+#################################################
+parameters:
+# TARGET_VG_ENV
+- name: TARGET_VariableGroup
+  type: string
+  default: dev
+  values:
+  - dev
+  
+#################################################
+# Variables
+#################################################
+variables:
+- group: ${{ parameters.TARGET_VariableGroup }}
 
-steps:
-- script: | 
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-    sudo apt-get update && sudo apt-get install terraform
+#################################################
+# Stages
+#################################################
+stages:
+
+# Access variable from variable group
+- stage: AccessVariable
+  displayName: Access variable from variable group
+  jobs:
+  - job:
+    steps:
+    - bash: |
+        echo  ARM_CLIENT_ID=$ARM_CLIENT_ID
+        echo ===============
+        printenv | sort -V
+      env:
+        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
+        
+# Install Terraform
+- stage: InstallTerraform
   displayName: 'Install Terraform'
-
-- script: |
-    terraform version
-  displayName: 'Check Terraform Version'
-
-- script: |
-    cd terraform/environments/dev
-    ls -lah
-    terraform init
-    terraform plan
+  jobs:
+  - job:
+    steps:
+    - bash: | 
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install terraform
+  
+# Terraform Init & Plan
+- stage: TerraformInit
   displayName: 'Change directory and test terraform init'
+  jobs:
+  - job:
+    steps:    
+    - bash: |
+        cd terraform/environments/dev
+        ls -lah
+        terraform init
+        terraform plan

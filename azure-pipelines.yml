@@ -46,40 +46,14 @@ stages:
       inputs:
         terraformVersion: 'latest'
   
-  - job: init
+  - job: 
     displayName: "Terraform Init"
     dependsOn: install
     steps:
     - bash: |
         cd terraform/environments/dev
         terraform init
-      env:
-        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(ARM_TENANT_ID)
-
-  - job: validate
-    displayName: "Terraform Validate"
-    dependsOn: init
-    steps:
-    - bash: |
-        cd terraform/environments/dev
         terraform validate
-      env:
-        ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
-        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
-        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(ARM_TENANT_ID)
-
-  - job: plan
-    displayName: "Terraform Plan"
-    dependsOn: validate
-    steps:
-    - bash: |
-        cd terraform/environments/dev
         terraform plan
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)

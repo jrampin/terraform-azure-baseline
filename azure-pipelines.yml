@@ -16,7 +16,7 @@ pool:
 #################################################
 parameters:
 # TARGET_VG_ENV
-- name: TARGET_VariableGroup
+- name: TARGET_Variable_Group
   type: string
   default: dev
   values:
@@ -26,37 +26,62 @@ parameters:
 # Variables
 #################################################
 variables:
-- group: ${{ parameters.TARGET_VariableGroup }}
+- group: ${{ parameters.TARGET_Variable_Group }}
 
-jobs:
-- job: TestStart
-
-  steps:
-  - task: TerraformInstaller@0
-    displayName: "Install Terraform"
-    inputs:
-      terraformVersion: 'latest'
-
-  - bash: |
-      cd terraform/environments/dev/
-      terraform init
-      displayName: Terraform Init
-      name: init
+#################################################
+# Stages
+#################################################
+stages:
+- stage: install
+  jobs:
+  - job: 
+    steps:
+    - task: TerraformInstaller@0
+      displayName: "Install Terraform"
+      inputs:
+        terraformVersion: 'latest'
+        
+- stage: validate
+  jobs:
+  - job: Validate
+    steps:
+    - bash: |
+        cd terraform/environments/dev/
+        terraform init
     env:
       ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
       ARM_CLIENT_ID: $(ARM_CLIENT_ID)
       ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
       ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
       ARM_TENANT_ID: $(ARM_TENANT_ID)
-
-  - bash: |
-      cd terraform/environments/dev/
-      terraform plan
-      displayName: Terraform Plan
-      name: plan
+    dependsOn: install
+      
+- stage: dev-init
+  jobs:
+  - job: Init
+    steps:
+    - bash: |
+        cd terraform/environments/dev/
+        terraform init
     env:
       ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
       ARM_CLIENT_ID: $(ARM_CLIENT_ID)
       ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
       ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
       ARM_TENANT_ID: $(ARM_TENANT_ID)
+    dependsOn: validate
+
+- stage: dev-plan
+  jobs:
+  - job: Plan
+    steps:
+    - bash: |
+        cd terraform/environments/dev/
+        terraform plan
+    env:
+      ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)
+    dependsOn: dev-init

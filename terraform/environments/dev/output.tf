@@ -1,3 +1,3 @@
 output "environment" {
-  value = var.ENVIRONMENT
+  value = var.environment
 }

@@ -1,6 +1,12 @@
+#################################################
+# Triggers
+#################################################
 trigger:
 - main
 
+#################################################
+# Agent Pool
+#################################################
 pool:
   vmImage: 'ubuntu-20.04'
 
@@ -30,38 +36,22 @@ stages:
 - stage: AccessVariable
   displayName: Access variable from variable group
   jobs:
-  - job:
+  - Install_Terraform:
     steps:
     - bash: |
-        echo  ARM_CLIENT_ID=$ARM_CLIENT_ID
-        echo ===============
-        printenv | sort -V
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update && sudo apt-get install terraform
+  - Terraform_Init:
+    steps:
+    - bash: |
+        cd terraform/environments/dev
+        ls -lah
+        terraform init
+        terraform plan    
       env:
         ARM_ACCESS_KEY: $(ARM_ACCESS_KEY)
         ARM_CLIENT_ID: $(ARM_CLIENT_ID)
         ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
         ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(ARM_TENANT_ID)
-        
-# Install Terraform
-- stage: InstallTerraform
-  displayName: 'Install Terraform'
-  jobs:
-  - job:
-    steps:
-    - bash: | 
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-        sudo apt-get update && sudo apt-get install terraform
-  
-# Terraform Init & Plan
-- stage: TerraformInit
-  displayName: 'Change directory and test terraform init'
-  jobs:
-  - job:
-    steps:    
-    - bash: |
-        cd terraform/environments/dev
-        ls -lah
-        terraform init
-        terraform plan
